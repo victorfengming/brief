@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site, path } from '../config/site';
+const hasEmail = site.email.includes('@');
+---
+<BaseLayout title="联系" description="联系与合作方式。">
+  <div class="container page-hero"><p class="eyebrow">CONTACT / CONNECT</p><h1>保持联系<span class="gradient-text">.</span></h1><p class="lead">欢迎就自动驾驶云端系统、分布式通信与工程实践交流。正式发布前，请在配置中填入你的真实联系方式。</p></div>
+  <section class="container section contact-grid"><div class="card"><div class="card-kicker">01 / EMAIL</div><h2>邮件</h2><p>{hasEmail ? site.email : '[YOUR_EMAIL] · 尚未配置'}</p>{hasEmail && <a class="card-link" href={`mailto:${site.email}`}>发送邮件 ↗</a>}</div><div class="card"><div class="card-kicker">02 / GITHUB</div><h2>代码仓库</h2><p>{site.github || '[YOUR_GITHUB_URL] · 尚未配置'}</p>{site.github && <a class="card-link" href={site.github} target="_blank" rel="noopener noreferrer">访问 GitHub ↗</a>}</div><div class="card"><div class="card-kicker">03 / RESUME</div><h2>简历 PDF</h2><p>{site.resumePdf ? '下载完整简历' : '尚未上传 PDF；提供文件后再显示下载链接。'}</p>{site.resumePdf && <a class="card-link" href={path(site.resumePdf)} download>下载 PDF ↗</a>}</div></section>
+</BaseLayout>
+<style>.contact-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.card h2{font-size:27px}.card p{overflow-wrap:anywhere}@media(max-width:800px){.contact-grid{grid-template-columns:1fr}}</style>

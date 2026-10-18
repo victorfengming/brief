@@ -1,0 +1,14 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { path } from '../config/site';
+interface Props { article: CollectionEntry<'blog'>; }
+const { article } = Astro.props;
+const date = article.data.publishedAt.toISOString().slice(0, 10);
+---
+<article class="card">
+  <div class="card-kicker">FIELD NOTES / {date}</div>
+  <h3>{article.data.title}</h3>
+  <p>{article.data.description}</p>
+  <div class="tag-row">{article.data.tags.map((tag) => <span class="tag">{tag}</span>)}</div>
+  <a class="card-link" href={path(`blog/${article.id}/`)} aria-label={`阅读文章：${article.data.title}`}>阅读文章 ↗</a>
+</article>

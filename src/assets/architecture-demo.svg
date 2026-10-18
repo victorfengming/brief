@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 290" role="img" aria-labelledby="title desc">
+  <title id="title">车云消息链路演示架构</title><desc id="desc">模拟车辆依次连接到 MQTT Broker、消息处理服务、下游消费者</desc>
+  <rect width="900" height="290" rx="18" fill="#101d2d"/>
+  <g fill="#142c40" stroke="#33758a" stroke-width="2"><rect x="34" y="83" width="175" height="125" rx="12"/><rect x="256" y="83" width="175" height="125" rx="12"/><rect x="478" y="83" width="175" height="125" rx="12"/><rect x="700" y="83" width="165" height="125" rx="12"/></g>
+  <g fill="#e4f3f9" font-family="sans-serif" text-anchor="middle" font-size="21"><text x="121" y="150">模拟车辆</text><text x="343" y="150">MQTT Broker</text><text x="565" y="150">消息处理</text><text x="782" y="150">下游消费者</text></g>
+  <g stroke="#21d4d9" stroke-width="3" fill="none"><path d="M212 145h37m-9-8 10 8-10 8M434 145h37m-9-8 10 8-10 8M656 145h37m-9-8 10 8-10 8"/></g>
+  <text x="34" y="39" fill="#21d4d9" font-family="monospace" font-size="13" letter-spacing="2">DEMONSTRATION ARCHITECTURE / NOT A REAL SYSTEM</text>
+  <text x="34" y="255" fill="#91a7c3" font-family="sans-serif" font-size="14">模拟数据 · 通用组件 · 无内部系统信息</text>
+</svg>

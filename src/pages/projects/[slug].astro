@@ -1,0 +1,17 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { path } from '../../config/site';
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+interface Props { project: CollectionEntry<'projects'>; }
+const { project } = Astro.props;
+const { Content, headings } = await render(project);
+---
+<BaseLayout title={project.data.title} description={project.data.summary}>
+  <div class="container page-hero"><p class="eyebrow">PROJECT / CASE STUDY</p><h1>{project.data.title}</h1><p class="lead">{project.data.summary}</p><div class="tag-row">{project.data.techStack.map((tech) => <span class="tag">{tech}</span>)}</div></div>
+  <div class="container article-layout section"><article class="prose"><Content /><p class="back"><a href={path('projects/')}>← 返回项目列表</a></p></article><aside aria-label="文章目录"><p>本文目录</p>{headings.filter((heading) => heading.depth === 2).map((heading) => <a href={`#${heading.slug}`}>{heading.text}</a>)}</aside></div>
+</BaseLayout>
+<style>.page-hero .tag-row{margin-top:26px}.article-layout{display:grid;grid-template-columns:minmax(0,760px) 220px;gap:80px;justify-content:space-between}.article-layout aside{position:sticky;top:30px;align-self:start;border-left:1px solid var(--line);padding-left:20px}.article-layout aside p{font-weight:700;color:var(--cyan);font-size:12px}.article-layout aside a{display:block;color:var(--muted);font-size:12px;line-height:1.5;margin:12px 0}.article-layout aside a:hover,.back a{color:var(--cyan)}.back{margin-top:65px}@media(max-width:800px){.article-layout{display:block}.article-layout aside{display:none}}</style>

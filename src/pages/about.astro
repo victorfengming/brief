@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../config/site';
+---
+<BaseLayout title="关于我" description="关于自动驾驶云端工程方向、技能与职业经历。">
+  <div class="container page-hero"><p class="eyebrow">ABOUT / PROFILE</p><h1>关于我<span class="gradient-text">.</span></h1><p class="lead">{site.description} 这里的个人经历尚未填入，避免把示例内容误认为真实履历。</p></div>
+  <section class="container section two-col"><div><p class="eyebrow">01 / APPROACH</p><h2>工程实践与持续学习</h2></div><div class="prose"><p>[在此填写真实的工作背景、技术方向和你希望解决的问题。]</p><p>这个站点将项目实践、技术文章和可复现实验放在一起，方便读者沿着问题、方案和验证方法了解工作方式。</p></div></section>
+  <section class="container section two-col lined"><div><p class="eyebrow">02 / EXPERIENCE</p><h2>工作经历</h2></div><div class="experience"><div><span>[20XX — 至今]</span><h3>[职位名称] / [公司或组织]</h3><p>[填写职责、具体贡献和可公开的成果。]</p></div><div><span>[20XX — 20XX]</span><h3>[职位名称] / [公司或组织]</h3><p>[填写职责、具体贡献和可公开的成果。]</p></div></div></section>
+  <section class="container section two-col lined"><div><p class="eyebrow">03 / TOOLBOX</p><h2>技能与方向</h2></div><div><div class="tag-row">{site.skills.map((skill) => <span class="tag">{skill}</span>)}</div><p class="muted skills-note">技能标签来自方案草稿，请根据实际经验调整。</p><h3>教育背景</h3><p class="muted">[学校 / 专业 / 学位 / 时间]</p></div></section>
+</BaseLayout>
+<style>.two-col{display:grid;grid-template-columns:38% 1fr;gap:50px}.lined{border-top:1px solid var(--line)}.experience>div{padding:0 0 30px;margin-bottom:30px;border-bottom:1px solid var(--line)}.experience span{color:var(--cyan);font:12px ui-monospace,monospace}.experience h3{margin:15px 0 10px}.experience p,.skills-note{color:var(--muted);line-height:1.8}.skills-note{margin:24px 0 50px}@media(max-width:700px){.two-col{grid-template-columns:1fr;gap:15px}}</style>

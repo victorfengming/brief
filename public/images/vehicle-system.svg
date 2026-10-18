@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 510" role="img" aria-labelledby="title desc">
+  <title id="title">车辆与云端连接示意</title><desc id="desc">线条绘制的车辆、道路与云端节点</desc>
+  <defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#21d4d9"/><stop offset="1" stop-color="#478bfa"/></linearGradient><radialGradient id="bg"><stop stop-color="#163b55"/><stop offset="1" stop-color="#0b1423"/></radialGradient></defs>
+  <rect width="700" height="510" rx="22" fill="url(#bg)"/>
+  <g stroke="#28536c" fill="none"><circle cx="350" cy="250" r="190"/><circle cx="350" cy="250" r="145"/><circle cx="350" cy="250" r="100"/><path d="M0 390h700M0 430h700M0 470h700"/></g>
+  <g fill="none" stroke="url(#g)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M188 303h327l-23-72a26 26 0 0 0-25-18H245a26 26 0 0 0-25 18l-32 72Z"/><path d="M167 304h369a17 17 0 0 1 17 17v57H150v-57a17 17 0 0 1 17-17ZM218 234h270M231 378v30m243-30v30"/><path d="M273 305v-25h158v25M341 215V130m0 0c-37 0-69-17-91-44m91 44c37 0 69-17 91-44"/></g>
+  <g fill="#21d4d9"><circle cx="341" cy="130" r="8"/><circle cx="250" cy="86" r="6"/><circle cx="432" cy="86" r="6"/><circle cx="203" cy="352" r="11"/><circle cx="498" cy="352" r="11"/></g>
+  <g fill="#91a7c3" font-family="monospace" font-size="12"><text x="28" y="38">VEHICLE / CLOUD LINK</text><text x="28" y="485">STATIC CONCEPT VISUAL · NO REAL VEHICLE DATA</text></g>
+</svg>

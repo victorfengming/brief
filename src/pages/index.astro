@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { site, path } from '../config/site';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft && data.featured)).sort((a, b) => a.data.order - b.data.order).slice(0, 3);
+const articles = (await getCollection('blog', ({ data }) => !data.draft)).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()).slice(0, 3);
+---
+<BaseLayout>
+  <section class="hero container">
+    <div class="hero-copy">
+      <p class="eyebrow">{site.titleEn}</p>
+      <h1>Engineering the connection between <span class="gradient-text">vehicles</span> and the <span class="gradient-text">cloud.</span></h1>
+      <p class="lead">{site.description}</p>
+      <div class="hero-actions"><a class="btn" href={path('projects/')}>探索项目 <span aria-hidden="true">↗</span></a><a class="btn btn-ghost" href={path('blog/')}>阅读技术文章 <span aria-hidden="true">↗</span></a></div>
+      <div class="hero-skills" aria-label="技术方向">{site.skills.map((skill) => <span>{skill}</span>)}</div>
+    </div>
+    <div class="hero-visual"><img src={path('images/vehicle-system.svg')} width="700" height="510" alt="车辆、道路轨迹和云端连接的概念示意图" /><span class="visual-caption">[ SIMULATED SYSTEM VISUAL ]</span></div>
+  </section>
+
+  <section class="section container" aria-labelledby="focus-title">
+    <div class="section-head"><div><p class="eyebrow">01 / FOCUS AREAS</p><h2 id="focus-title">关注的工程问题<span class="gradient-text">.</span></h2></div><p class="muted">从连接到数据，从可靠性到可观测性。</p></div>
+    <div class="focus-grid">
+      <div><span>01</span><h3>Vehicle–Cloud Messaging</h3><p>连接管理、消息交付、重连恢复与链路边界。</p></div>
+      <div><span>02</span><h3>Distributed Systems</h3><p>事件驱动、幂等处理、状态机与一致性取舍。</p></div>
+      <div><span>03</span><h3>Reliability Engineering</h3><p>可观测性、故障演练、容量验证与恢复流程。</p></div>
+    </div>
+  </section>
+
+  <section class="section container" aria-labelledby="project-title">
+    <div class="section-head"><div><p class="eyebrow">02 / SELECTED WORK</p><h2 id="project-title">项目案例<span class="gradient-text">.</span></h2></div><a class="section-link" href={path('projects/')}>查看全部项目 ↗</a></div>
+    <div class="cards">{projects.map((project) => <ProjectCard project={project} />)}</div>
+  </section>
+
+  <section class="section container" aria-labelledby="writing-title">
+    <div class="section-head"><div><p class="eyebrow">03 / FIELD NOTES</p><h2 id="writing-title">技术笔记<span class="gradient-text">.</span></h2></div><a class="section-link" href={path('blog/')}>阅读全部文章 ↗</a></div>
+    <div class="cards">{articles.map((article) => <ArticleCard article={article} />)}</div>
+  </section>
+
+  <section class="about-strip"><div class="container about-strip-inner"><div><p class="eyebrow">04 / ABOUT</p><h2>把复杂系统讲清楚，<br/>把工程问题解决好。</h2><p class="lead">这里将记录技术案例、可复现实验与持续学习的过程。个人经历和成果仍待补充与审核。</p></div><a class="btn btn-ghost" href={path('about/')}>关于我 ↗</a></div></section>
+</BaseLayout>
+
+<style>
+  .hero { min-height:660px; padding-top:92px; padding-bottom:88px; display:grid; grid-template-columns:1.12fr .88fr; gap:44px; align-items:center; }
+  .hero h1 { max-width:800px; margin:26px 0 28px; }
+  .hero .lead { max-width:620px; }
+  .hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin:34px 0 48px; }
+  .hero-skills { display:flex; flex-wrap:wrap; gap:18px; color:var(--muted); font:12px ui-monospace,SFMono-Regular,Consolas,monospace; }
+  .hero-skills span::before { content:'+'; color:var(--cyan); margin-right:8px; }
+  .hero-visual { position:relative; }
+  .hero-visual img { width:100%; height:auto; border:1px solid var(--line); border-radius:22px; box-shadow:0 30px 80px #0007; }
+  .visual-caption { position:absolute; right:20px; bottom:20px; color:var(--cyan); font:10px ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:.1em; }
+  .focus-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; border:1px solid var(--line); background:var(--line); border-radius:10px; overflow:hidden; }
+  .focus-grid > div { background:#101d2e; padding:30px; }
+  .focus-grid span { color:var(--cyan); font:12px ui-monospace,SFMono-Regular,Consolas,monospace; }
+  .focus-grid h3 { margin:48px 0 10px; }
+  .focus-grid p { color:var(--muted); font-size:14px; line-height:1.7; margin:0; }
+  .section-link { color:var(--cyan); font-size:13px; font-weight:700; white-space:nowrap; }
+  .about-strip { margin-top:50px; padding:88px 0; border-block:1px solid var(--line); background:linear-gradient(90deg,#10293b,#101b2b); }
+  .about-strip-inner { display:flex; align-items:end; justify-content:space-between; gap:40px; }
+  .about-strip h2 { margin:24px 0; }
+  .about-strip .lead { margin-bottom:0; }
+  @media(max-width:900px) { .hero { grid-template-columns:1fr; padding-top:74px; gap:35px; } .hero-visual { max-width:700px; } .focus-grid { grid-template-columns:1fr; } .focus-grid h3 { margin-top:20px; } }
+  @media(max-width:700px) { .hero { min-height:0; padding:64px 0; } .hero h1 { font-size:clamp(46px,10vw,70px); } .hero-skills { gap:8px 16px; } .about-strip-inner { display:block; } .about-strip .btn { margin-top:28px; } }
+</style>
