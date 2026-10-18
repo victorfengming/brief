@@ -8,6 +8,9 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "dev:status": "astro dev status",
+    "dev:stop": "astro dev stop",
+    "dev:restart": "astro dev --force",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",

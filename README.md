@@ -9,10 +9,15 @@
 ```bash
 npm ci
 npm run dev      # 本地开发，默认 http://localhost:4321
+npm run dev:status  # 查看已有开发服务器
+npm run dev:stop    # 停止已有开发服务器
+npm run dev:restart # 替换已有开发服务器并重新启动
 npm run check    # Astro + TypeScript 检查
 npm run build    # 静态输出到 dist/
 npm run preview  # 预览构建结果
 ```
+
+如果启动时出现 `Another astro dev server is already running`，先运行 `npm run dev:status`。需要关闭旧实例时运行 `npm run dev:stop`；需要直接重启时运行 `npm run dev:restart`。不要同时启动两个普通的 `npm run dev` 实例。
 
 项目使用 Astro、TypeScript、MDX Content Collections、Tailwind CSS 4，并预装 React 集成供后续需要客户端交互的模块使用。首期页面保持静态，不发送访客数据。
 
