@@ -1,7 +1,4 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import LegacyFallback from '../components/LegacyFallback.astro';
 ---
-<BaseLayout title="实验室" description="可复现的通信、存储与可靠性工程实验。">
-  <div class="container page-hero"><p class="eyebrow">LAB / EXPERIMENTS</p><h1>实验室<span class="gradient-text">.</span></h1><p class="lead">计划用模拟数据和本地环境，把工程问题拆成可以重复运行的小实验。下列条目是选题计划，尚未附上可运行代码。</p></div>
-  <section class="container section"><div class="cards"><article class="card"><div class="card-kicker">PLANNED / 01</div><h3>MQTT 断线重连</h3><p>观察 TCP 断开、会话恢复、重订阅与消息重复。</p><span class="tag">待制作</span></article><article class="card"><div class="card-kicker">PLANNED / 02</div><h3>Redis Lua 原子操作</h3><p>使用模拟队列验证读写步骤的原子性。</p><span class="tag">待制作</span></article><article class="card"><div class="card-kicker">PLANNED / 03</div><h3>时序数据 Benchmark</h3><p>用合成数据对比批量写入与查询方式。</p><span class="tag">待制作</span></article></div></section>
-</BaseLayout>
+<LegacyFallback href="/zh/lab/" />

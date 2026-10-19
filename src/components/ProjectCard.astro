@@ -1,13 +1,16 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { path } from '../config/site';
-interface Props { project: CollectionEntry<'projects'>; }
-const { project } = Astro.props;
+import { contentKey, copy, localizedPath } from '../i18n.js';
+type Locale = 'zh' | 'en';
+interface Props { project: CollectionEntry<'projects'>; locale: Locale; }
+const { project, locale } = Astro.props;
+const strings = copy(locale);
 ---
 <article class="card">
   <div class="card-kicker">CASE STUDY / {String(project.data.order).padStart(2, '0')}</div>
   <h3>{project.data.title}</h3>
   <p>{project.data.summary}</p>
   <div class="tag-row">{project.data.techStack.map((tag) => <span class="tag">{tag}</span>)}</div>
-  <a class="card-link" href={path(`projects/${project.id}/`)} aria-label={`阅读项目：${project.data.title}`}>阅读案例 ↗</a>
+  <a class="card-link" href={path(localizedPath(locale, `projects/${contentKey(project.id)}`))} aria-label={`${strings.readProject}: ${project.data.title}`}>{strings.readProject} ↗</a>
 </article>

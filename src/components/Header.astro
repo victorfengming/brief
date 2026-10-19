@@ -1,17 +1,23 @@
 ---
 import { path } from '../config/site';
-const links = [
-  ['首页', ''], ['项目', 'projects/'], ['文章', 'blog/'],
-  ['实验室', 'lab/'], ['关于', 'about/'], ['联系', 'contact/'],
-] as const;
+import { copy, counterpartPath, localizedPath } from '../i18n.js';
+type Locale = 'zh' | 'en';
+interface Props { locale: Locale; route?: string; contentType?: 'blog' | 'projects'; contentId?: string; translatedIds?: Set<string>; }
+const { locale, route = '', contentType, contentId, translatedIds = new Set<string>() } = Astro.props;
+const strings = copy(locale);
+const targetLocale = locale === 'zh' ? 'en' : 'zh';
+const alternatePath = contentType && contentId
+  ? counterpartPath(targetLocale, contentType, contentId, translatedIds)
+  : localizedPath(targetLocale, route);
 const current = Astro.url.pathname;
 ---
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href={path()} aria-label="返回首页"><span>&lt;</span> AUTONOMOUS / CLOUD <span>/&gt;</span></a>
-    <button class="menu-toggle" type="button" aria-label="打开导航" aria-expanded="false" aria-controls="primary-nav">菜单 ☰</button>
-    <nav class="nav" id="primary-nav" aria-label="主导航">
-      {links.map(([label, route]) => <a href={path(route)} aria-current={current === path(route) ? 'page' : undefined}>{label}</a>)}
+    <a class="brand" href={path(localizedPath(locale))} aria-label={strings.homeLabel}><span>&lt;</span> AUTONOMOUS / CLOUD <span>/&gt;</span></a>
+    <button class="menu-toggle" type="button" aria-label={strings.openMenu} aria-expanded="false" aria-controls="primary-nav">{strings.menu} ☰</button>
+    <nav class="nav" id="primary-nav" aria-label={strings.primaryNavigation}>
+      {strings.navigation.map(([label, itemRoute]: [string, string]) => <a href={path(localizedPath(locale, itemRoute))} aria-current={current === path(localizedPath(locale, itemRoute)) ? 'page' : undefined}>{label}</a>)}
+      <a class="language-switch" href={path(alternatePath)} data-locale={targetLocale} aria-label={`Switch language to ${targetLocale === 'en' ? 'English' : 'Chinese'}`}>中文 / EN</a>
     </nav>
   </div>
 </header>
@@ -27,5 +33,8 @@ const current = Astro.url.pathname;
   nav?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
     button?.setAttribute('aria-expanded', 'false');
     nav?.setAttribute('data-open', 'false');
+  }));
+  document.querySelectorAll<HTMLAnchorElement>('.language-switch').forEach((link) => link.addEventListener('click', () => {
+    try { localStorage.setItem('portfolio-locale', link.dataset.locale ?? 'zh'); } catch {}
   }));
 </script>

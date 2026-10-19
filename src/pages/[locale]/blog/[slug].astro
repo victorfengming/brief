@@ -1,0 +1,19 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { path } from '../../../config/site';
+import { contentKey, copy } from '../../../i18n.js';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+export async function getStaticPaths() {
+  const articles = await getCollection('blog', ({ data }) => !data.draft);
+  return articles.map((article) => ({ params: { locale: article.data.locale, slug: contentKey(article.id) }, props: { article } }));
+}
+interface Props { article: CollectionEntry<'blog'>; }
+const { article } = Astro.props;
+const locale = article.data.locale;
+const strings = copy(locale);
+const { Content, headings } = await render(article);
+const date = article.data.publishedAt.toISOString().slice(0, 10);
+const translatedIds = new Set((await getCollection('blog', ({ data }) => !data.draft)).map((entry) => entry.id));
+---
+<BaseLayout {locale} title={article.data.title} description={article.data.description} contentType="blog" contentId={article.id} {translatedIds}><div class="container page-hero"><p class="eyebrow">BLOG / FIELD NOTES</p><h1>{article.data.title}</h1><p class="lead">{article.data.description}</p><div class="meta-line"><time datetime={date}>{date}</time><span>{article.data.tags.join(' / ')}</span></div></div><div class="container article-layout section"><article class="prose"><Content /><p class="back"><a href={path(`/${locale}/blog/`)}>← {strings.backToBlog}</a></p></article><aside aria-label={strings.tableOfContents}><p>{strings.tableOfContents}</p>{headings.filter((heading) => heading.depth === 2).map((heading) => <a href={`#${heading.slug}`}>{heading.text}</a>)}</aside></div></BaseLayout>
+<style>.page-hero .meta-line{margin-top:25px}.article-layout{display:grid;grid-template-columns:minmax(0,760px) 220px;gap:80px;justify-content:space-between}.article-layout aside{position:sticky;top:30px;align-self:start;border-left:1px solid var(--line);padding-left:20px}.article-layout aside p{font-weight:700;color:var(--cyan);font-size:12px}.article-layout aside a{display:block;color:var(--muted);font-size:12px;line-height:1.5;margin:12px 0}.article-layout aside a:hover,.back a{color:var(--cyan)}.back{margin-top:65px}@media(max-width:800px){.article-layout{display:block}.article-layout aside{display:none}}</style>

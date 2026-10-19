@@ -1,0 +1,11 @@
+---
+import { getCollection } from 'astro:content';
+import ArticleCard from '../../../components/ArticleCard.astro';
+import { LOCALES } from '../../../i18n.js';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+export function getStaticPaths() { return LOCALES.map((locale) => ({ params: { locale } })); }
+const { locale } = Astro.params as { locale: 'zh' | 'en' };
+const articles = (await getCollection('blog', ({ data }) => !data.draft && data.locale === locale)).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+const text = locale === 'zh' ? { title: '技术文章', description: '关于 MQTT、分布式系统与可靠性工程的技术笔记。', lead: '记录问题、实验步骤和工程取舍。未经审核的草稿不会进入文章列表或站点地图。', empty: '暂无已发布文章。' } : { title: 'Technical writing', description: 'Notes on MQTT, distributed systems, and reliability engineering.', lead: 'Notes on problems, experiment steps, and engineering trade-offs. Unreviewed drafts do not appear in the article list or sitemap.', empty: 'No published articles yet.' };
+---
+<BaseLayout {locale} title={text.title} description={text.description} route="blog"><div class="container page-hero"><p class="eyebrow">BLOG / FIELD NOTES</p><h1>{text.title}<span class="gradient-text">.</span></h1><p class="lead">{text.lead}</p></div><section class="container section"><div class="cards">{articles.map((article) => <ArticleCard {article} {locale} />)}</div>{articles.length === 0 && <p class="empty-state">{text.empty}</p>}</section></BaseLayout>

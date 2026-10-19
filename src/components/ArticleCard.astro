@@ -1,8 +1,11 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { path } from '../config/site';
-interface Props { article: CollectionEntry<'blog'>; }
-const { article } = Astro.props;
+import { contentKey, copy, localizedPath } from '../i18n.js';
+type Locale = 'zh' | 'en';
+interface Props { article: CollectionEntry<'blog'>; locale: Locale; }
+const { article, locale } = Astro.props;
+const strings = copy(locale);
 const date = article.data.publishedAt.toISOString().slice(0, 10);
 ---
 <article class="card">
@@ -10,5 +13,5 @@ const date = article.data.publishedAt.toISOString().slice(0, 10);
   <h3>{article.data.title}</h3>
   <p>{article.data.description}</p>
   <div class="tag-row">{article.data.tags.map((tag) => <span class="tag">{tag}</span>)}</div>
-  <a class="card-link" href={path(`blog/${article.id}/`)} aria-label={`阅读文章：${article.data.title}`}>阅读文章 ↗</a>
+  <a class="card-link" href={path(localizedPath(locale, `blog/${contentKey(article.id)}`))} aria-label={`${strings.readArticle}: ${article.data.title}`}>{strings.readArticle} ↗</a>
 </article>

@@ -2,38 +2,42 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import { site, path } from '../config/site';
+import { copy } from '../i18n.js';
 
-interface Props { title?: string; description?: string; image?: string; }
-const { title, description = site.description, image } = Astro.props;
-const pageTitle = title ? `${title} | ${site.title}` : `${site.title} | ${site.name}`;
+type Locale = 'zh' | 'en';
+interface Props { title?: string; description?: string; image?: string; locale: Locale; route?: string; contentType?: 'blog' | 'projects'; contentId?: string; translatedIds?: Set<string>; }
+const { title, description, image, locale, route = '', contentType, contentId, translatedIds } = Astro.props;
+const strings = copy(locale);
+const pageDescription = description ?? (locale === 'zh' ? site.description : 'Engineering the connection between vehicles and the cloud through distributed systems and reliability practice.');
+const pageTitle = title ? `${title} | ${strings.siteTitle}` : `${strings.siteTitle} | ${site.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
 const ogImage = image ? new URL(image.replace(/^\//, ''), Astro.site ?? Astro.url).toString() : undefined;
 ---
 <!doctype html>
-<html lang="zh-CN">
+<html lang={locale === 'zh' ? 'zh-CN' : 'en'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#080d16" />
-    <meta name="description" content={description} />
+    <meta name="description" content={pageDescription} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href={path('favicon.svg')} type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={pageDescription} />
     <meta property="og:url" content={canonical} />
     {ogImage && <meta property="og:image" content={ogImage} />}
     <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
     <title>{pageTitle}</title>
   </head>
   <body>
-    <a class="skip" href="#main">跳转到正文</a>
-    <Header />
+    <a class="skip" href="#main">{strings.skipToContent}</a>
+    <Header {locale} {route} {contentType} {contentId} {translatedIds} />
     <main id="main"><slot /></main>
     <footer class="site-footer">
       <div class="container footer-inner">
         <span>© {new Date().getFullYear()} {site.name} · Built with Astro</span>
-        <span><a href={path('projects/')}>Projects</a> · <a href={path('blog/')}>Writing</a> · <a href={path('contact/')}>Contact</a></span>
+        <span><a href={path(`/${locale}/projects/`)}>{strings.projects}</a> · <a href={path(`/${locale}/blog/`)}>{strings.writing}</a> · <a href={path(`/${locale}/contact/`)}>{strings.contact}</a></span>
       </div>
     </footer>
   </body>

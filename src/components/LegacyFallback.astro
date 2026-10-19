@@ -1,0 +1,6 @@
+---
+interface Props { href: string; }
+const { href } = Astro.props;
+---
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width" /><meta http-equiv="refresh" content={`0;url=${href}`} /><title>正在跳转</title></head><body><main><p>此链接已迁移到多语言站点。<a href={href}>前往中文页面</a></p></main></body></html>

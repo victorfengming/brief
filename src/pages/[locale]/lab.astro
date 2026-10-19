@@ -1,0 +1,8 @@
+---
+import { LOCALES } from '../../i18n.js';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+export function getStaticPaths() { return LOCALES.map((locale) => ({ params: { locale } })); }
+const { locale } = Astro.params as { locale: 'zh' | 'en' };
+const text = locale === 'zh' ? { title: '实验室', description: '可复现的通信、存储与可靠性工程实验。', lead: '计划用模拟数据和本地环境，把工程问题拆成可以重复运行的小实验。下列条目是选题计划，尚未附上可运行代码。', status: '待制作', cards: [['MQTT 断线重连', '观察 TCP 断开、会话恢复、重订阅与消息重复。'], ['Redis Lua 原子操作', '使用模拟队列验证读写步骤的原子性。'], ['时序数据 Benchmark', '用合成数据对比批量写入与查询方式。']] } : { title: 'Lab', description: 'Reproducible experiments in messaging, storage, and reliability engineering.', lead: 'The plan is to break engineering questions into small, repeatable experiments using synthetic data and local environments. These are proposed topics; runnable code is not available yet.', status: 'Planned', cards: [['MQTT reconnection', 'Observe TCP disconnects, session recovery, resubscription, and duplicate messages.'], ['Redis Lua atomic operations', 'Use a simulated queue to validate atomic read-write steps.'], ['Time-series benchmark', 'Compare batch writes and query patterns with synthetic data.']] };
+---
+<BaseLayout {locale} title={text.title} description={text.description} route="lab"><div class="container page-hero"><p class="eyebrow">LAB / EXPERIMENTS</p><h1>{text.title}<span class="gradient-text">.</span></h1><p class="lead">{text.lead}</p></div><section class="container section"><div class="cards">{text.cards.map(([title, description], index) => <article class="card"><div class="card-kicker">PLANNED / 0{index + 1}</div><h3>{title}</h3><p>{description}</p><span class="tag">{text.status}</span></article>)}</div></section></BaseLayout>
