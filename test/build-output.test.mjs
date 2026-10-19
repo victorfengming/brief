@@ -13,7 +13,14 @@ for (const output of [
   });
 }
 
-test('legacy entry exists and links to the Chinese home page', async () => {
-  const html = await readFile('dist/index.html', 'utf8');
-  assert.match(html, /\/zh\//);
+test('root and legacy redirects preserve the configured base path', async () => {
+  const basePath = (process.env.BASE_PATH || '').replace(/\/$/, '');
+  const chineseHome = `${basePath}/zh/`;
+  const escaped = chineseHome.replaceAll('/', '\\/');
+  const [root, legacyBlog] = await Promise.all([
+    readFile('dist/index.html', 'utf8'),
+    readFile('dist/blog/index.html', 'utf8'),
+  ]);
+  assert.match(root, new RegExp(escaped));
+  assert.match(legacyBlog, new RegExp(escaped));
 });

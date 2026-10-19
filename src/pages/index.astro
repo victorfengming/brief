@@ -1,3 +1,6 @@
 ---
+import { path } from '../config/site';
+const zhHome = path('zh/');
+const localeBase = path('');
 ---
-<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width" /><title>选择语言</title></head><body><main><p>正在选择语言。<a href="/zh/">前往中文页面</a></p></main><script>try{const saved=localStorage.getItem('portfolio-locale');const locale=saved==='en'||saved==='zh'?saved:(navigator.language?.toLowerCase().startsWith('en')?'en':'zh');location.replace(`/${locale}/`)}catch{location.replace('/zh/')}</script></body></html>
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width" /><title>选择语言</title></head><body><main><p>正在选择语言。<a href={zhHome}>前往中文页面</a></p></main><script define:vars={{ zhHome, localeBase }}>try{const saved=localStorage.getItem('portfolio-locale');const locale=saved==='en'||saved==='zh'?saved:(navigator.language?.toLowerCase().startsWith('en')?'en':'zh');location.replace(`${localeBase}${locale}/`)}catch{location.replace(zhHome)}</script></body></html>
