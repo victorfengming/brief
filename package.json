@@ -12,6 +12,7 @@
     "dev:stop": "astro dev stop",
     "dev:restart": "astro dev --force",
     "build": "astro build",
+    "test": "node --test",
     "preview": "astro preview",
     "check": "astro check",
     "lint": "astro check"
