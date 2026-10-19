@@ -59,8 +59,16 @@ export function localizedPath(locale, route = '') {
   return `/${locale}/${suffix ? `${suffix}/` : ''}`;
 }
 
+export function contentLocale(id) {
+  return id.split('/', 1)[0];
+}
+
+export function contentKey(id) {
+  return id.split(/\/(.+)/)[1] ?? '';
+}
+
 export function counterpartPath(locale, type, id, translatedIds) {
-  const [, key = ''] = id.split(/\/(.+)/);
+  const key = contentKey(id);
   return translatedIds.has(`${locale}/${key}`) ? localizedPath(locale, `${type}/${key}`) : localizedPath(locale, type);
 }
 

@@ -1,5 +1,6 @@
 ---
 title: "车云消息链路 · 演示案例"
+locale: zh
 summary: "使用模拟车辆事件说明 MQTT 消息接入、处理与故障恢复的基本设计。此案例不代表真实公司项目。"
 order: 1
 techStack: ["Go", "MQTT", "Protobuf", "Redis"]
@@ -19,7 +20,7 @@ draft: false
 
 ## Architecture · 系统结构
 
-![演示架构：模拟车辆经 MQTT Broker 到消息处理服务，再到下游消费者](../../assets/architecture-demo.svg)
+![演示架构：模拟车辆经 MQTT Broker 到消息处理服务，再到下游消费者](../../../assets/architecture-demo.svg)
 
 演示流程分为接入、校验、处理和消费四步。架构图只使用通用组件名称，不包含内部系统、地址或数据。
 

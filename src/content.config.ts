@@ -6,6 +6,7 @@ const projects = defineCollection({
   loader: glob({ base: './src/content/projects', pattern: '**/*.{md,mdx}' }),
   schema: z.object({
     title: z.string(),
+    locale: z.enum(['zh', 'en']),
     summary: z.string(),
     order: z.number().int(),
     techStack: z.array(z.string()),
@@ -19,6 +20,7 @@ const blog = defineCollection({
   loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
   schema: z.object({
     title: z.string(),
+    locale: z.enum(['zh', 'en']),
     description: z.string(),
     publishedAt: z.coerce.date(),
     tags: z.array(z.string()),

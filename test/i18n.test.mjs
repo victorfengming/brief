@@ -3,6 +3,8 @@ import test from 'node:test';
 
 import {
   counterpartPath,
+  contentKey,
+  contentLocale,
   localizedPath,
   preferredLocale,
 } from '../src/i18n.js';
@@ -26,4 +28,9 @@ test('builds locale-prefixed routes without duplicate slashes', () => {
 test('falls back to a localized index when no translated detail exists', () => {
   assert.equal(counterpartPath('en', 'blog', 'zh/mqtt', new Set(['en/mqtt'])), '/en/blog/mqtt/');
   assert.equal(counterpartPath('en', 'blog', 'zh/mqtt', new Set()), '/en/blog/');
+});
+
+test('separates locale and translation key from collection IDs', () => {
+  assert.equal(contentLocale('en/mqtt-reconnect-demo'), 'en');
+  assert.equal(contentKey('zh/mqtt-reconnect-demo'), 'mqtt-reconnect-demo');
 });

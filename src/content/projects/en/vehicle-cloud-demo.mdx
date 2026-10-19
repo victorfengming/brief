@@ -1,0 +1,52 @@
+---
+title: "Vehicle-Cloud Messaging · Demonstration Case Study"
+locale: en
+summary: "A basic design for MQTT event ingestion, processing, and failure recovery using simulated vehicle events. This is not a real company project."
+order: 1
+techStack: ["Go", "MQTT", "Protobuf", "Redis"]
+featured: true
+draft: false
+---
+
+> **Demonstration note:** This case study uses fictional vehicle events and a general architecture to show a content template and technical reasoning. Replace it with sanitized, reviewed material before publishing a personal project.
+
+## Background
+
+Assume a group of test vehicles continuously reports state events. A cloud service receives the messages, performs basic validation, and passes results to downstream consumers. The focus is how the system remains observable and recoverable through brief connection outages and duplicate delivery.
+
+## Responsibility
+
+`[Describe your actual scope, collaborators, and deliverables here.]`
+
+## Architecture
+
+![Demonstration architecture: simulated vehicles send messages through an MQTT Broker to a processing service and downstream consumers](../../../assets/architecture-demo.svg)
+
+The demonstration flow has four stages: ingestion, validation, processing, and consumption. The diagram uses only general component names and contains no internal systems, addresses, or data.
+
+## Challenges
+
+- **Duplicate delivery:** Network jitter can deliver an event more than once, so consumers need idempotency based on an event identifier.
+- **Brief disconnections:** After recovery, the boundaries around resubscription, replay, and message ordering must be explicit.
+- **Processing backlog:** When downstream processing slows, queue depth needs monitoring and a backpressure policy.
+
+## Solution
+
+The demonstration uses an event ID as the idempotency key and expiring state records to avoid duplicate processing in a short window. Events requiring strict order are partitioned by vehicle identifier; events without a global-order requirement can be consumed in parallel. The real design must weigh QoS, storage capacity, and business consistency requirements.
+
+```go
+// Illustrates processing order only; this is not production code.
+func handle(event Event) error {
+    if err := validate(event); err != nil { return err }
+    if alreadyHandled(event.ID) { return nil }
+    return processAndRecord(event)
+}
+```
+
+## Results and boundaries
+
+`[Add the real test environment, method, results, and limitations. Do not publish unverified numbers.]`
+
+## Lessons
+
+Reliable design starts by making the business boundaries for loss, duplication, and reordering explicit. Monitoring and failure drills should cover combinations of disconnection, duplicate messages, and unavailable downstream services.
