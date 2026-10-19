@@ -16,17 +16,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      - name: Configure GitHub Pages URL
+      - name: Configure brief custom domain
         shell: bash
         run: |
-          repository_name="${GITHUB_REPOSITORY#*/}"
-          if [ "$repository_name" = "${GITHUB_REPOSITORY_OWNER}.github.io" ]; then
-            base_path="/"
-          else
-            base_path="/$repository_name"
-          fi
-          echo "SITE_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io" >> "$GITHUB_ENV"
-          echo "BASE_PATH=$base_path" >> "$GITHUB_ENV"
+          echo "SITE_URL=https://brief.colemak.cn" >> "$GITHUB_ENV"
+          echo "BASE_PATH=/" >> "$GITHUB_ENV"
       - name: Build and upload
         uses: withastro/action@v6
         with:
