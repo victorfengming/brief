@@ -1,0 +1,13 @@
+---
+title: "Ctypes 崩溃无法被 try/except 捕获：车端原生配置读取的隔离方案"
+locale: zh
+description: "用子进程隔离原生配置读取崩溃，并保留超时、退出状态与解码上下文。"
+publishedAt: 2026-10-19
+tags: ["Python", "ctypes", "进程隔离"]
+draft: true
+featured: false
+---
+
+## 摘要
+
+通过 ctypes 调用原生库时，段错误等进程级故障会越过 Python 异常处理边界，使普通 try/except 无法保护调用进程。本文将介绍用子进程承载配置读取的隔离思路，以及如何保留退出状态、标准错误、超时和解码信息，让失败可以定位和处理。

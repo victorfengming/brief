@@ -1,0 +1,13 @@
+---
+title: "Kubernetes 中“镜像没变”为何仍故障：ConfigMap subPath 配置漂移复盘"
+locale: zh
+description: "理解 ConfigMap subPath 挂载的更新边界，并核对容器实际读取的配置。"
+publishedAt: 2026-10-19
+tags: ["Kubernetes", "ConfigMap", "配置管理"]
+draft: true
+featured: false
+---
+
+## 摘要
+
+镜像版本相同的容器，也可能因启动时挂载的配置不同而表现出不同的行为；通过 subPath 挂载的 ConfigMap 文件不会随对象更新自动刷新。本文将介绍如何对照集群配置与容器内文件确认漂移，并在重建 Pod 后核验挂载内容和应用读取结果。

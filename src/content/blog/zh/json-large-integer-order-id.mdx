@@ -1,0 +1,13 @@
+---
+title: "大整数订单号跨端传递的隐患：JSON 53 位安全整数问题复盘"
+locale: zh
+description: "用端到端字符串契约保护大整数订单号，避免 JavaScript 精度丢失导致身份错配。"
+publishedAt: 2026-10-19
+tags: ["JSON", "JavaScript", "接口契约"]
+draft: true
+featured: false
+---
+
+## 摘要
+
+超过 JavaScript 安全整数范围的订单号，如果在 JSON 链路中被解析为 Number，就可能丢失精度，导致跨端查询或状态关联使用错误的标识。本文将介绍如何在存储、接口、前端和日志之间统一字符串契约，并通过边界值验证避免先发生精度丢失再转为字符串的问题。

@@ -1,0 +1,13 @@
+---
+title: "Cython 类型标注的隐藏陷阱：为什么 str(value) 也救不了 float 输入"
+locale: zh
+description: "解释 Cython 入口类型检查的执行时机，以及函数体内转换未能处理输入的原因。"
+publishedAt: 2026-10-19
+tags: ["Python", "Cython", "类型检查"]
+draft: true
+featured: false
+---
+
+## 摘要
+
+当 Cython 将字符串参数标注编译为入口类型检查时，传入浮点数可能在进入函数体前就被拒绝，因此函数内部的 str(value) 没有执行机会。本文将结合源码、生成代码和编译后调用的验证方法，说明如何找到真正生效的类型约束，并选择合适的输入归一化边界。

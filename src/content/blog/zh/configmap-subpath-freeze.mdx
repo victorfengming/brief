@@ -1,0 +1,13 @@
+---
+title: "相同镜像为什么行为不同：ConfigMap subPath 的配置冻结问题"
+locale: zh
+description: "从 ConfigMap subPath 挂载切入，分析配置生命周期与滚动重启后的生效验证。"
+publishedAt: 2026-10-19
+tags: ["Kubernetes", "ConfigMap", "配置管理"]
+draft: true
+featured: false
+---
+
+## 摘要
+
+相同镜像的实例可能因配置挂载方式和创建时间不同而读取到不同内容，使用 ConfigMap subPath 挂载的文件不会自动接收后续配置更新。本文将梳理配置对象、容器内文件与进程读取时机的关系，并说明滚动重启后如何验证文件内容和实际运行行为。
