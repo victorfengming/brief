@@ -1,9 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
 import LegacyFallback from '../../components/LegacyFallback.astro';
+import { shouldPublishBlogEntry } from '../../config/content';
 import { contentKey } from '../../i18n.js';
 export async function getStaticPaths() {
-  const articles = await getCollection('blog', ({ data }) => !data.draft && data.locale === 'zh');
+  const articles = await getCollection('blog', (entry) => shouldPublishBlogEntry(entry) && entry.data.locale === 'zh');
   return articles.map((article) => ({ params: { slug: contentKey(article.id) }, props: { href: `/zh/blog/${contentKey(article.id)}/` } }));
 }
 const { href } = Astro.props;

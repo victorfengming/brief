@@ -16,11 +16,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      - name: Configure brief custom domain
+      - name: Configure colemak.cn custom domain
         shell: bash
         run: |
-          echo "SITE_URL=https://brief.colemak.cn" >> "$GITHUB_ENV"
+          echo "SITE_URL=https://colemak.cn" >> "$GITHUB_ENV"
           echo "BASE_PATH=/" >> "$GITHUB_ENV"
+          echo "PUBLISH_DRAFTS=true" >> "$GITHUB_ENV"
       - name: Build and upload
         uses: withastro/action@v6
         with:

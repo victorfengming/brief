@@ -2,10 +2,11 @@ import assert from 'node:assert/strict';
 import { access, readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-test('Pages workflow builds the brief custom domain at the root path', async () => {
+test('Pages workflow builds the colemak.cn custom domain at the root path', async () => {
   const workflow = await readFile('.github/workflows/deploy.yml', 'utf8');
-  assert.match(workflow, /SITE_URL=https:\/\/brief\.colemak\.cn/);
+  assert.match(workflow, /SITE_URL=https:\/\/colemak\.cn/);
   assert.match(workflow, /BASE_PATH=\//);
+  assert.match(workflow, /PUBLISH_DRAFTS=true/);
   assert.doesNotMatch(workflow, /base_path="\/\$repository_name"/);
 });
 
@@ -41,4 +42,8 @@ test('configured-site build emits root-path routes and a matching canonical URL'
   assert.match(root, /\/zh\//);
   assert.doesNotMatch(root, /\/brief\//);
   assert.ok(zhHome.includes(`${siteUrl}/zh/`));
+});
+
+test('production build emits published draft routes', async () => {
+  await assert.doesNotReject(access('dist/zh/blog/config-sync-end-to-end-diagnosis/index.html'));
 });
