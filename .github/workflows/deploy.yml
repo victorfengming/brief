@@ -21,7 +21,7 @@ jobs:
         run: |
           echo "SITE_URL=https://colemak.cn" >> "$GITHUB_ENV"
           echo "BASE_PATH=/" >> "$GITHUB_ENV"
-          echo "PUBLISH_DRAFTS=true" >> "$GITHUB_ENV"
+          echo "PUBLISH_DRAFTS=false" >> "$GITHUB_ENV"
       - name: Build and upload
         uses: withastro/action@v6
         with:
