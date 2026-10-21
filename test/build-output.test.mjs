@@ -6,7 +6,8 @@ test('Pages workflow builds the colemak.cn custom domain at the root path', asyn
   const workflow = await readFile('.github/workflows/deploy.yml', 'utf8');
   assert.match(workflow, /SITE_URL=https:\/\/colemak\.cn/);
   assert.match(workflow, /BASE_PATH=\//);
-  assert.match(workflow, /PUBLISH_DRAFTS=true/);
+  assert.match(workflow, /PUBLISH_DRAFTS=false/);
+  assert.doesNotMatch(workflow, /PUBLISH_DRAFTS=true/);
   assert.doesNotMatch(workflow, /base_path="\/\$repository_name"/);
 });
 
@@ -15,6 +16,8 @@ for (const output of [
   'dist/en/index.html',
   'dist/zh/blog/mqtt-reconnect-demo/index.html',
   'dist/en/blog/mqtt-reconnect-demo/index.html',
+  'dist/downloads/articles/manifest.json',
+  'dist/downloads/articles/zh/go-container-gomaxprocs-redis-tail-latency.pdf',
 ]) {
   test(`build emits ${output}`, async () => {
     await assert.doesNotReject(access(output));
@@ -44,6 +47,27 @@ test('configured-site build emits root-path routes and a matching canonical URL'
   assert.ok(zhHome.includes(`${siteUrl}/zh/`));
 });
 
-test('production build emits published draft routes', async () => {
-  await assert.doesNotReject(access('dist/zh/blog/config-sync-end-to-end-diagnosis/index.html'));
+test('production build omits draft routes', async () => {
+  await assert.rejects(access('dist/zh/blog/config-sync-end-to-end-diagnosis/index.html'));
+  await assert.rejects(
+    access('dist/downloads/articles/zh/config-sync-end-to-end-diagnosis.pdf'),
+  );
+});
+
+test('production build emits explicitly published routes', async () => {
+  await assert.doesNotReject(
+    access('dist/zh/blog/go-container-gomaxprocs-redis-tail-latency/index.html'),
+  );
+});
+
+test('published article detail links to its hosted PDF', async () => {
+  const article = await readFile(
+    'dist/zh/blog/go-container-gomaxprocs-redis-tail-latency/index.html',
+    'utf8',
+  );
+  assert.match(
+    article,
+    /href="\/downloads\/articles\/zh\/go-container-gomaxprocs-redis-tail-latency\.pdf"/,
+  );
+  assert.match(article, />下载 PDF ↓</);
 });

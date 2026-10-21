@@ -14,7 +14,36 @@ const locale = article.data.locale;
 const strings = copy(locale);
 const { Content, headings } = await render(article);
 const date = article.data.publishedAt.toISOString().slice(0, 10);
+const slug = contentKey(article.id);
+const pdfHref = path(`/downloads/articles/${locale}/${slug}.pdf`);
+const downloadPdf = locale === 'zh' ? '下载 PDF' : 'Download PDF';
 const translatedIds = new Set((await getCollection('blog', shouldPublishBlogEntry)).map((entry) => entry.id));
 ---
-<BaseLayout {locale} title={article.data.title} description={article.data.description} contentType="blog" contentId={article.id} {translatedIds}><div class="container page-hero"><p class="eyebrow">BLOG / FIELD NOTES</p><h1>{article.data.title}</h1><p class="lead">{article.data.description}</p><div class="meta-line"><time datetime={date}>{date}</time><span>{article.data.tags.join(' / ')}</span></div></div><div class="container article-layout section"><article class="prose"><Content /><p class="back"><a href={path(`/${locale}/blog/`)}>← {strings.backToBlog}</a></p></article><aside aria-label={strings.tableOfContents}><p>{strings.tableOfContents}</p>{headings.filter((heading) => heading.depth === 2).map((heading) => <a href={`#${heading.slug}`}>{heading.text}</a>)}</aside></div></BaseLayout>
-<style>.page-hero .meta-line{margin-top:25px}.article-layout{display:grid;grid-template-columns:minmax(0,760px) 220px;gap:80px;justify-content:space-between}.article-layout aside{position:sticky;top:30px;align-self:start;border-left:1px solid var(--line);padding-left:20px}.article-layout aside p{font-weight:700;color:var(--cyan);font-size:12px}.article-layout aside a{display:block;color:var(--muted);font-size:12px;line-height:1.5;margin:12px 0}.article-layout aside a:hover,.back a{color:var(--cyan)}.back{margin-top:65px}@media(max-width:800px){.article-layout{display:block}.article-layout aside{display:none}}</style>
+<BaseLayout {locale} title={article.data.title} description={article.data.description} contentType="blog" contentId={article.id} {translatedIds}><div class="container page-hero"><p class="eyebrow">BLOG / FIELD NOTES</p><h1>{article.data.title}</h1><p class="lead">{article.data.description}</p><div class="meta-line"><time datetime={date}>{date}</time><span>{article.data.tags.join(' / ')}</span></div>{!article.data.draft && <div class="article-actions"><a class="pdf-download" href={pdfHref} download>{downloadPdf} ↓</a></div>}</div><div class="container article-layout section"><article class="prose"><Content /><p class="back"><a href={path(`/${locale}/blog/`)}>← {strings.backToBlog}</a></p></article><aside aria-label={strings.tableOfContents}><p>{strings.tableOfContents}</p>{headings.filter((heading) => heading.depth === 2).map((heading) => <a href={`#${heading.slug}`}>{heading.text}</a>)}</aside></div></BaseLayout>
+<style>
+  .page-hero .meta-line{margin-top:25px}
+  .article-actions{margin-top:24px}
+  .pdf-download{display:inline-flex;align-items:center;border:1px solid var(--cyan);border-radius:999px;padding:10px 18px;color:var(--cyan);font-size:13px;font-weight:700;letter-spacing:.04em;transition:background-color .2s ease,color .2s ease}
+  .pdf-download:hover{background:var(--cyan);color:var(--bg)}
+  .article-layout{display:grid;grid-template-columns:minmax(0,760px) 220px;gap:80px;justify-content:space-between}
+  .article-layout aside{position:sticky;top:30px;align-self:start;border-left:1px solid var(--line);padding-left:20px}
+  .article-layout aside p{font-weight:700;color:var(--cyan);font-size:12px}
+  .article-layout aside a{display:block;color:var(--muted);font-size:12px;line-height:1.5;margin:12px 0}
+  .article-layout aside a:hover,.back a{color:var(--cyan)}
+  .back{margin-top:65px}
+  @media(max-width:800px){.article-layout{display:block}.article-layout aside{display:none}}
+  @media print{
+    @page{size:A4;margin:18mm 16mm 20mm}
+    :global(html),:global(body){background:#fff!important;color:#111!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    :global(.site-header),:global(.site-footer),:global(.skip),.article-actions,.article-layout aside,.back{display:none!important}
+    .page-hero{padding-top:0!important;padding-bottom:12mm!important}
+    .page-hero h1{color:#111!important;font-size:26pt!important;line-height:1.18!important}
+    .page-hero .lead,.page-hero .meta-line{color:#444!important}
+    .article-layout{display:block!important;padding-top:0!important}
+    .article-layout article{max-width:none!important}
+    :global(.prose){color:#111!important;font-size:10.5pt!important;line-height:1.7!important}
+    :global(.prose h2),:global(.prose h3),:global(.prose h4){color:#111!important;break-after:avoid-page}
+    :global(.prose pre),:global(.prose table),:global(.prose blockquote),:global(.prose img){break-inside:avoid-page}
+    :global(.prose a){color:#111!important;text-decoration:underline}
+  }
+</style>
