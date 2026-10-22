@@ -102,3 +102,23 @@ test('rejects a stale PDF manifest after the article source changes', async (t) 
   assert.equal(errors.length, 1);
   assert.match(errors[0], /stale PDF.*zh\/published/);
 });
+
+test('changes the PDF source hash when a referenced SVG changes', async (t) => {
+  const root = await mkdtemp(path.join(tmpdir(), 'brief-pdf-diagram-hash-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const contentRoot = path.join(root, 'content');
+  const publicRoot = path.join(root, 'public');
+  await mkdir(path.join(contentRoot, 'zh'), { recursive: true });
+  await mkdir(path.join(publicRoot, 'images'), { recursive: true });
+  await writeFile(
+    path.join(contentRoot, 'zh', 'published.mdx'),
+    `${publishedSource}\n<img src="/images/diagram.svg" alt="Diagram" />\n`,
+  );
+  await writeFile(path.join(publicRoot, 'images', 'diagram.svg'), '<svg>one</svg>');
+
+  const [before] = await discoverPublishedArticles(contentRoot, publicRoot);
+  await writeFile(path.join(publicRoot, 'images', 'diagram.svg'), '<svg>two</svg>');
+  const [after] = await discoverPublishedArticles(contentRoot, publicRoot);
+
+  assert.notEqual(before.sourceHash, after.sourceHash);
+});

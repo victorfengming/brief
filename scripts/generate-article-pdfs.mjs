@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 import { chromium } from 'playwright-core';
 
+import { validateDiagramAssets } from './lib/article-diagrams.mjs';
 import { discoverPublishedArticles, pdfUrlForArticle } from './lib/article-pdfs.mjs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -129,7 +130,15 @@ async function replacePublicArticles() {
   }
 }
 
-const articles = await discoverPublishedArticles(contentRoot);
+const diagramErrors = await validateDiagramAssets({
+  projectRoot,
+  manifestPath: 'diagrams/manifest.json',
+});
+if (diagramErrors.length > 0) {
+  throw new Error(`Article diagram verification failed:\n${diagramErrors.join('\n')}`);
+}
+
+const articles = await discoverPublishedArticles(contentRoot, publicRoot);
 if (articles.length === 0) throw new Error('No published articles were found.');
 
 let browser;
@@ -151,7 +160,7 @@ try {
     const route = `/${article.locale}/blog/${article.slug}/`;
     const response = await page.goto(`${staticServer.origin}${route}`, { waitUntil: 'networkidle' });
     if (!response?.ok()) throw new Error(`Failed to load ${route}: HTTP ${response?.status()}`);
-    await page.evaluate(async () => {
+    const brokenImages = await page.evaluate(async () => {
       await document.fonts.ready;
       await Promise.all(
         [...document.images]
@@ -161,7 +170,15 @@ try {
             image.addEventListener('error', resolve, { once: true });
           })),
       );
+      return [...document.images]
+        .filter((image) => !image.complete || image.naturalWidth === 0)
+        .map((image) => image.currentSrc || image.src);
     });
+    if (brokenImages.length > 0) {
+      throw new Error(
+        `Failed to load article images for ${route}: ${brokenImages.join(', ')}`,
+      );
+    }
 
     const pdfPath = path.join(generatedRoot, article.locale, `${article.slug}.pdf`);
     await mkdir(path.dirname(pdfPath), { recursive: true });

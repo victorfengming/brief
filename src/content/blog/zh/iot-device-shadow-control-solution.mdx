@@ -29,26 +29,10 @@ featured: false
 
 这里的“消息投递”也必须注明位置：云端发布者收到表示接受的 PUBACK（reason code < 0x80，缺省为成功），仅证明代理在该传输边界接受/处理了 PUBLISH；`0x10 No matching subscribers` 仍是接受，但没有匹配的订阅者。原因码为 0x80 及以上则表示失败，不能据此认为消息已被接受。即使 PUBACK 表示接受，也不能证明最终订阅者已经完成处理或业务执行成功。MQTT 5.0 第 3.4.2.1 节定义了这些原因码，第 4.3.2 节允许接收方在完成应用消息后续交付之前发送 PUBACK。[OASIS MQTT 5.0 标准](https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html)
 
-```mermaid
-flowchart LR
-    User[控制调用方] --> API[云端 API]
-    API --> Control[影子控制服务]
-    Control --> SQL[(SQL 控制事实存储)]
-    Control --> Broker[消息代理]
-    Broker --> Engine[设备影子引擎]
-    Engine <--> Local[(本地 Redis 缓存)]
-    Engine --> Actuator[执行器]
-    Actuator --> Device[设备或业务运行态]
-    Device --> Reader[状态采集器]
-    Reader --> Engine
-    Engine --> Broker
-    Broker --> Receiver[云端状态接收器]
-    Receiver --> SQL
-    Receiver --> Projection[异步展示态重算]
-    SQL --> Query[事实与展示查询]
-    Projection --> Query
-    Query --> User
-```
+<figure class="article-diagram">
+  <img src="/images/articles/iot-device-shadow-control-solution/architecture.svg" alt="设备影子控制架构：控制调用方经由云端、消息代理与设备引擎下发目标，设备状态经采集和云端存储返回查询端" />
+  <figcaption>图 1：字段级设备影子控制的云端、消息与设备边界。</figcaption>
+</figure>
 
 SQL 保存原始控制事实，本地 Redis 保存设备已知的期望、观测与结果。消息代理传输快照和上报；设备引擎负责仲裁，执行器负责调用具体能力，采集器负责读取当前状态。展示重算消费事实，生成适合 UI 或运营阅读的视图。
 
@@ -79,43 +63,10 @@ SQL 保存原始控制事实，本地 Redis 保存设备已知的期望、观测
 
 ## 3. 一次控制怎样完成闭环
 
-```mermaid
-sequenceDiagram
-    participant C as 控制调用方
-    participant A as 云端 API
-    participant S as SQL 事实存储
-    participant M as 消息代理
-    participant E as 设备影子引擎
-    participant X as 执行器
-    participant R as 状态采集器
-    participant H as 云端状态接收器
-    C->>A: 写入字段期望、策略与有效期
-    A->>S: 读取候选，开启事务并锁行复核版本
-    A->>S: 写入期望、pending、批次及设备记录
-    S-->>A: 事务提交
-    A->>M: 发布完整 desired 快照（QoS 1 / Retain）
-    A-->>C: 返回云端受理结果
-    Note over A,M: 发布失败不能撤销已提交事实
-    M->>E: 传递快照，可能重复或乱序
-    E->>E: 更新本地缓存，归一化并按字段仲裁
-    opt 策略选中执行且未临时禁用
-        E->>X: 设置目标值
-        X-->>E: 执行器结果
-    end
-    E->>R: 读取当前值
-    R-->>E: 观测值及来源
-    E->>M: reported、观测版本及对应期望结果
-    M->>H: 投递设备上报
-    H->>S: 筛选版本，合并观测与匹配代次的结果
-    opt 设备请求回声
-        H->>M: 回发云端当前完整 desired 快照
-        M->>E: 对账快照
-    end
-    C->>A: 查询事实及展示态
-    A->>S: 读取当前记录
-    S-->>A: desired、reported 与结果
-    A-->>C: 分层呈现受理、执行与观测结论
-```
+<figure class="article-diagram article-diagram-wide">
+  <img src="/images/articles/iot-device-shadow-control-solution/control-sequence.svg" alt="从云端写入期望状态，到设备仲裁执行、采集上报和云端查询的完整控制时序" />
+  <figcaption>图 2：一次字段控制从受理到观测收敛的时序。</figcaption>
+</figure>
 
 图中 API 返回的是云端处理结论。即使返回成功，仍不能据此承诺 MQTT 发布成功；当前发布错误只被记录，并不向批量调用方传播。反过来，提交后缓存失效回调如果失败，也可能让调用返回错误而数据库已经提交。调用方需要读取事实确认当前代次，不能把任何异常都理解为数据库回滚。
 
@@ -182,28 +133,10 @@ for each field in desired_fields:
         arbitrate_policy(field, D, R)
 ```
 
-```mermaid
-flowchart TD
-    Trigger[新快照或周期触发] --> Known{字段与观测存在且可归一化?}
-    Known -->|否| Skip[记录问题并跳过此字段]
-    Known -->|是| Equal{D 与 R 相等?}
-    Equal -->|是| Satisfied[必要时写 already-satisfied]
-    Equal -->|否| Disabled{此字段处于临时禁用?}
-    Disabled -->|是| Hold[保留当前结果并等待恢复]
-    Disabled -->|否| Policy{策略选中执行?}
-    Policy -->|否| Preempted[写 preempted]
-    Policy -->|是| Execute[同步调用执行器]
-    Execute --> Result{返回结果}
-    Result -->|成功| Success[写 success 并清除失败记录]
-    Result -->|失败或异常| Fail[写 failed 并累计字段失败]
-    Result -->|无返回值| Preempted
-    Satisfied --> Sample[随后采样并按变化上报]
-    Skip --> Sample
-    Hold --> Sample
-    Preempted --> Sample
-    Success --> Sample
-    Fail --> Sample
-```
+<figure class="article-diagram">
+  <img src="/images/articles/iot-device-shadow-control-solution/device-arbitration.svg" alt="设备端按字段检查观测、目标值、临时禁用状态和策略，然后执行或跳过，最后采样上报" />
+  <figcaption>图 3：设备端字段仲裁、执行与采样流程。</figcaption>
+</figure>
 
 MQTT 回调向有界内存队列投入消息，工作循环每轮最多取一条。收到快照会立即触发仲裁，没有新消息时也会周期仲裁。循环随后采样注册字段，值变化时生成设备侧观测版本并更新本地内存与 Redis。读取为无值时跳过，不能把它当成已观察到的空状态。
 

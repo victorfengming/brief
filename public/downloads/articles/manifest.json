@@ -21,6 +21,16 @@
       "url": "/downloads/articles/zh/go-container-gomaxprocs-redis-tail-latency.pdf",
       "sourceHash": "sha256:a867bf498f4f74711ec42ad8b00f93fccb788d23b0bedb2fce349e7255da4f33"
     },
+    "zh/iot-device-shadow-control-solution": {
+      "title": "从消息送达到状态收敛：一套字段级 IoT 设备影子控制方案",
+      "url": "/downloads/articles/zh/iot-device-shadow-control-solution.pdf",
+      "sourceHash": "sha256:92646e3f0b28edfd839acffe177308100044e227bd1aac789cfdee197c89b504"
+    },
+    "zh/iot-device-shadow-primary-sources": {
+      "title": "IoT 设备影子与数字孪生控制：一手资料研究笔记",
+      "url": "/downloads/articles/zh/iot-device-shadow-primary-sources.pdf",
+      "sourceHash": "sha256:bf9acb8e080c089ac97bc309fcad5b7291e19bc40c15cde51205f0cc2afc6368"
+    },
     "zh/mqtt-reconnect-demo": {
       "title": "MQTT 断线重连：一个可复现的思考框架",
       "url": "/downloads/articles/zh/mqtt-reconnect-demo.pdf",

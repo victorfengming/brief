@@ -7,13 +7,31 @@ const frontmatterValue = (source, key) => {
   return match?.[1].replace(/^['"]|['"]$/g, '');
 };
 
-const sourceHash = (source) =>
-  `sha256:${createHash('sha256').update(source).digest('hex')}`;
+const sourceHash = async (source, publicRoot) => {
+  const hash = createHash('sha256').update(source);
+  const svgUrls = [
+    ...source.matchAll(/\bsrc=["'](\/images\/[^"']+\.svg)["']/g),
+  ].map((match) => match[1]);
+
+  for (const url of svgUrls) {
+    if (!publicRoot) {
+      throw new Error(`publicRoot is required to hash article asset ${url}`);
+    }
+    const assetPath = path.resolve(publicRoot, url.replace(/^\//, ''));
+    const resolvedPublicRoot = path.resolve(publicRoot);
+    if (!assetPath.startsWith(`${resolvedPublicRoot}${path.sep}`)) {
+      throw new Error(`article asset escapes public root: ${url}`);
+    }
+    hash.update('\0').update(url).update('\0').update(await readFile(assetPath));
+  }
+
+  return `sha256:${hash.digest('hex')}`;
+};
 
 export const pdfUrlForArticle = ({ locale, slug }) =>
   `/downloads/articles/${locale}/${slug}.pdf`;
 
-export async function discoverPublishedArticles(contentRoot) {
+export async function discoverPublishedArticles(contentRoot, publicRoot) {
   const localeEntries = await readdir(contentRoot, { withFileTypes: true });
   const articles = [];
 
@@ -41,7 +59,7 @@ export async function discoverPublishedArticles(contentRoot) {
         id: `${locale}/${slug}`,
         locale,
         slug,
-        sourceHash: sourceHash(source),
+        sourceHash: await sourceHash(source, publicRoot),
         sourcePath,
         title: frontmatterValue(source, 'title') ?? slug,
       });
@@ -52,7 +70,12 @@ export async function discoverPublishedArticles(contentRoot) {
 }
 
 export async function validatePublishedArticlePdfs({ contentRoot, publicRoot }) {
-  const articles = await discoverPublishedArticles(contentRoot);
+  let articles;
+  try {
+    articles = await discoverPublishedArticles(contentRoot, publicRoot);
+  } catch (error) {
+    return [error.message];
+  }
   const manifestPath = path.join(
     publicRoot,
     'downloads',

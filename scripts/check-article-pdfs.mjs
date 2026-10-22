@@ -13,6 +13,6 @@ if (errors.length > 0) {
   for (const error of errors) console.error(`- ${error}`);
   process.exitCode = 1;
 } else {
-  const articles = await discoverPublishedArticles(contentRoot);
+  const articles = await discoverPublishedArticles(contentRoot, publicRoot);
   console.log(`Verified ${articles.length} published article PDFs.`);
 }

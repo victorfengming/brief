@@ -11,11 +11,13 @@
     "dev:status": "astro dev status",
     "dev:stop": "astro dev stop",
     "dev:restart": "astro dev --force",
-    "build": "npm run pdf:check && astro build",
+    "build": "npm run diagram:check && npm run pdf:check && astro build",
     "test": "node --test",
     "preview": "astro preview",
     "check": "astro check",
     "lint": "astro check",
+    "diagram:check": "node scripts/check-article-diagrams.mjs",
+    "diagram:generate": "node scripts/generate-article-diagrams.mjs",
     "pdf:check": "node scripts/check-article-pdfs.mjs",
     "pdf:generate": "node scripts/generate-article-pdfs.mjs"
   },
@@ -31,8 +33,10 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "@mermaid-js/mermaid-cli": "11.12.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "fast-xml-parser": "5.4.1",
     "playwright-core": "^1.64.1",
     "typescript": "^6.0.3"
   }

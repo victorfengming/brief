@@ -58,6 +58,13 @@ h3 { font-size:21px; letter-spacing:-.02em; }
 .prose pre { overflow-x:auto; padding:20px; border-radius:8px; border:1px solid var(--line); font-size:13px; }
 .prose blockquote { margin:30px 0; padding:4px 22px; border-left:3px solid var(--cyan); color:var(--muted); }
 .prose img { max-width:100%; height:auto; }
+.prose .article-diagram { margin:32px 0; padding:16px; overflow-x:auto; border:1px solid var(--line); border-radius:8px; background:#fff; }
+.prose .article-diagram img { display:block; width:100%; min-width:680px; margin:0 auto; }
+.prose .article-diagram figcaption { margin-top:12px; color:#526173; text-align:center; font-size:13px; line-height:1.5; }
+@media print {
+  .prose .article-diagram { overflow:visible; }
+  .prose .article-diagram img { min-width:0; }
+}
 .meta-line { display:flex; gap:20px; flex-wrap:wrap; color:var(--muted); font:12px ui-monospace,SFMono-Regular,Consolas,monospace; }
 .site-footer { border-top:1px solid var(--line); padding:38px 0; color:var(--muted); font-size:12px; }
 .footer-inner { display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; }
