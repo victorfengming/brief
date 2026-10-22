@@ -1,0 +1,35 @@
+sequenceDiagram
+    participant C as 控制调用方
+    participant A as 云端 API
+    participant S as SQL 事实存储
+    participant M as 消息代理
+    participant E as 设备影子引擎
+    participant X as 执行器
+    participant R as 状态采集器
+    participant H as 云端状态接收器
+    C->>A: 写入字段期望、策略与有效期
+    A->>S: 读取候选，开启事务并锁行复核版本
+    A->>S: 写入期望、pending、批次及设备记录
+    S-->>A: 事务提交
+    A->>M: 发布完整 desired 快照（QoS 1 / Retain）
+    A-->>C: 返回云端受理结果
+    Note over A,M: 发布失败不能撤销已提交事实
+    M->>E: 传递快照，可能重复或乱序
+    E->>E: 更新本地缓存，归一化并按字段仲裁
+    opt 策略选中执行且未临时禁用
+        E->>X: 设置目标值
+        X-->>E: 执行器结果
+    end
+    E->>R: 读取当前值
+    R-->>E: 观测值及来源
+    E->>M: reported、观测版本及对应期望结果
+    M->>H: 投递设备上报
+    H->>S: 筛选版本，合并观测与匹配代次的结果
+    opt 设备请求回声
+        H->>M: 回发云端当前完整 desired 快照
+        M->>E: 对账快照
+    end
+    C->>A: 查询事实及展示态
+    A->>S: 读取当前记录
+    S-->>A: desired、reported 与结果
+    A-->>C: 分层呈现受理、执行与观测结论

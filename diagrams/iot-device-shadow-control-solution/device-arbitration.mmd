@@ -1,0 +1,20 @@
+flowchart TD
+    Trigger[新快照或周期触发] --> Known{字段与观测存在且可归一化?}
+    Known -->|否| Skip[记录问题并跳过此字段]
+    Known -->|是| Equal{D 与 R 相等?}
+    Equal -->|是| Satisfied[必要时写 already-satisfied]
+    Equal -->|否| Disabled{此字段处于临时禁用?}
+    Disabled -->|是| Hold[保留当前结果并等待恢复]
+    Disabled -->|否| Policy{策略选中执行?}
+    Policy -->|否| Preempted[写 preempted]
+    Policy -->|是| Execute[同步调用执行器]
+    Execute --> Result{返回结果}
+    Result -->|成功| Success[写 success 并清除失败记录]
+    Result -->|失败或异常| Fail[写 failed 并累计字段失败]
+    Result -->|无返回值| Preempted
+    Satisfied --> Sample[随后采样并按变化上报]
+    Skip --> Sample
+    Hold --> Sample
+    Preempted --> Sample
+    Success --> Sample
+    Fail --> Sample

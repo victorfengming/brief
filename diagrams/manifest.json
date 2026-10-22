@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "diagrams": [
+    {
+      "source": "diagrams/iot-device-shadow-control-solution/architecture.mmd",
+      "output": "public/images/articles/iot-device-shadow-control-solution/architecture.svg",
+      "article": "src/content/blog/zh/iot-device-shadow-control-solution.mdx"
+    },
+    {
+      "source": "diagrams/iot-device-shadow-control-solution/control-sequence.mmd",
+      "output": "public/images/articles/iot-device-shadow-control-solution/control-sequence.svg",
+      "article": "src/content/blog/zh/iot-device-shadow-control-solution.mdx"
+    },
+    {
+      "source": "diagrams/iot-device-shadow-control-solution/device-arbitration.mmd",
+      "output": "public/images/articles/iot-device-shadow-control-solution/device-arbitration.svg",
+      "article": "src/content/blog/zh/iot-device-shadow-control-solution.mdx"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+flowchart LR
+    User[控制调用方] --> API[云端 API]
+    API --> Control[影子控制服务]
+    Control --> SQL[(SQL 控制事实存储)]
+    Control --> Broker[消息代理]
+    Broker --> Engine[设备影子引擎]
+    Engine <--> Local[(本地 Redis 缓存)]
+    Engine --> Actuator[执行器]
+    Actuator --> Device[设备或业务运行态]
+    Device --> Reader[状态采集器]
+    Reader --> Engine
+    Engine --> Broker
+    Broker --> Receiver[云端状态接收器]
+    Receiver --> SQL
+    Receiver --> Projection[异步展示态重算]
+    SQL --> Query[事实与展示查询]
+    Projection --> Query
+    Query --> User
