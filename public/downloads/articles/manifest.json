@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "articles": {
+    "en/mqtt-reconnect-demo": {
+      "title": "MQTT Reconnection: A Reproducible Reasoning Framework",
+      "url": "/downloads/articles/en/mqtt-reconnect-demo.pdf",
+      "sourceHash": "sha256:7baf5d3a401595f7fdd0acab2d0591292ddf81c3021a8fe040d405f8b5588af3"
+    },
+    "zh/astro-bilingual-content-routing": {
+      "title": "Astro 双语内容路由：把语言、内容与 URL 对齐",
+      "url": "/downloads/articles/zh/astro-bilingual-content-routing.pdf",
+      "sourceHash": "sha256:932127bcafe02af695fe68d6c6e42f5971160fac46bafa4463248fa10d2bb1cd"
+    },
+    "zh/astro-github-pages-base-path": {
+      "title": "Astro 部署到 GitHub Pages：理清 site、base 与自定义域名",
+      "url": "/downloads/articles/zh/astro-github-pages-base-path.pdf",
+      "sourceHash": "sha256:23f0b55008f451d6cf2551706e56a6096ff0d9e4e6809bbbb24474b362e85064"
+    },
+    "zh/go-container-gomaxprocs-redis-tail-latency": {
+      "title": "Redis 慢调用背后的 Go 调度问题：从 GOMAXPROCS=1 到 Go 1.25",
+      "url": "/downloads/articles/zh/go-container-gomaxprocs-redis-tail-latency.pdf",
+      "sourceHash": "sha256:a867bf498f4f74711ec42ad8b00f93fccb788d23b0bedb2fce349e7255da4f33"
+    },
+    "zh/mqtt-reconnect-demo": {
+      "title": "MQTT 断线重连：一个可复现的思考框架",
+      "url": "/downloads/articles/zh/mqtt-reconnect-demo.pdf",
+      "sourceHash": "sha256:94836cc3b3a0d19e5a70bf6c7619448a8f26e91d93b863d224f98f832387c8c8"
+    }
+  }
+}
